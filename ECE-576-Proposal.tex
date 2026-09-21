@@ -1,0 +1,134 @@
+
+\documentclass[11pt]{article}
+ 
+% ---------- Packages ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\setlength{\parskip}{0.6em}
+\setlength{\parindent}{0pt}
+ 
+% ---------- Colors ----------
+\definecolor{accent}{HTML}{2E3440}
+\definecolor{rulegray}{HTML}{888888}
+ 
+% ---------- Section styling ----------
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{accent}}
+  {\thesection}{0.6em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{accent}}
+  {\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.6em}
+\titlespacing*{\subsection}{0pt}{1.1em}{0.4em}
+ 
+% ---------- Header / Footer ----------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[R]{\small\thepage}
+\fancyfoot[C]{\small\textcolor{rulegray}{Draft proposal --- [Date]}}
+ 
+\hypersetup{
+  colorlinks=true,
+  linkcolor=accent,
+  urlcolor=accent,
+  citecolor=accent
+}
+ 
+% ---------- Helper: fill-in-the-blank line ----------
+\newcommand{\blank}[1]{\underline{\hspace{#1}}}
+ 
+\begin{document}
+ 
+% =====================================================
+% TITLE BLOCK
+% =====================================================
+\begin{center}
+  {\Huge\bfseries\color{accent} Advanced Side Channel Analysis Activity Proposal} \\[0.4em]
+  {\large ECE 576} \\[1em]
+  {\normalsize
+    \begin{tabular}{rl}
+      \textbf{By:} & Brayden Little and Cami Payne \\
+      \textbf{Date:} & 9 / 21 / 26 \\
+    \end{tabular}
+  }
+\end{center}
+ 
+\vspace{1em}
+\hrule
+\vspace{1.5em}
+ 
+% =====================================================
+% 1. OVERVIEW
+% =====================================================
+\section{Overview}
+ 
+\subsection{Summary}
+This challenge will be designed to teach students the basic concepts of side channel analysis, leakage assessment, and profiling/profiled attacks. It is intentionally designed to be entirely software-based, as to not require expensive hardware.
+ 
+\subsection{Learning Objectives}
+By the end of this workshop, participants will be able to:
+\begin{enumerate}[label=\arabic*.]
+  \item{} Understand the ideas behind why leakage assessment is necessary in side channel analysis.
+  \item{} Understand the ideas behind profiling a device and the attacks that enables.
+  \item{} Implement their understanding in a practical simulated scenario.
+\end{enumerate}
+ 
+% =====================================================
+% 2. AUDIENCE & PREREQUISITES
+% =====================================================
+\section{Prerequisites}
+ 
+\begin{tabularx}{\linewidth}{@{}l X@{}}
+  \toprule{}
+  \textbf{Target audience} & Undergraduate Computer Science and Computer Engineering Students. \\\\
+  \textbf{Assumed background} & A general knowledge of operating systems, Linux, and computer architecture, but the activity will be designed to be beginner-friendly, while still providing a challenge for more advanced students. \\
+  \bottomrule{}
+\end{tabularx}
+ 
+% =====================================================
+% 3. STRUCTURE / STAGE BREAKDOWN
+% =====================================================
+\section{Structure}
+ 
+\subsection{Format}
+The activity will resemble CTF-style challenges, having files that students will pull from a Github repository, and then interact with the simulated leaking devices using a local TCP service, as seen in many crypto and pwn challenges.
+ 
+\subsection{Stage Breakdown}
+ 
+\begin{tabular}{@{}l l p{0.42\linewidth} c@{}}
+  \toprule{}
+  \textbf{Stage} & \textbf{Name} & \textbf{Description} & \textbf{Time} \\
+  \midrule{}
+  0 & LEAK//ASSESS & Students will connect to a local simulated target device, which they are then able to interact with and capture simulated traces from. This stage is designed to teach leakage assessment, having students comparing fixed and random trace sets using a t-test to determine if there is statistically distinguishable information from the noise. & 20 min \\[0.4em]
+  \\
+  1 & PROFILE//BREACH & Students connect to a local simulated device with a known key that they can query to build a template attack. It is intended for students to learn how to build a profile from a few captured traces from the target device. & 40 min \\[0.4em]
+  \midrule{}
+  & & \hfill\textbf{Total} & 60 min \\
+  \bottomrule{}
+\end{tabular}
+ 
+\subsection{Scoring / Completion Criteria}
+Students will submit the retrieved key byte to a remote server as a flag
+ 
+% =====================================================
+% 4. TECHNICAL REQUIREMENTS
+% =====================================================
+\section{Technical Requirements}
+ 
+\subsection{Infrastructure}
+This activity will be designed to run on most OSes, the only firm requirement is an environment that is capable of running python. Students will be provided a docker image to prevent versioning issues from arising. Additionally, A remote CTF server will be hosted for students to submit the final flag to signal their completion of the activity.
+ 
+\subsection{Materials to Be Provided}
+\begin{itemize}[label=--]
+  \item{} Repo containing all necessary scripts, code, and information
+  \item{} README/pdf containing a description of the activity and instructions
+\end{itemize}
+
+\end{document}
