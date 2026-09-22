@@ -70,13 +70,13 @@
 \section{Overview}
  
 \subsection{Summary}
-This challenge will be designed to teach students the basic concepts of side channel analysis, leakage assessment, and profiling/profiled attacks. It is intentionally designed to be entirely software-based, as to not require expensive hardware.
+This program will be designed to teach students the fundamentals of leakage assessment and profiling. It will be entirely run on software and be hardware independent. Students will interact with a game GUI that allows them to observe the traces from four simulated computer chips running DES, one of which will be leaky. They will have to run experiments and record the traces of the various chips and use the traces to run a t-test to determine which chip is leaky. Then, they will interact with a copy of the chip to profile it by compiling the chip's behavior under different plaintext-secret key pairs. Finally they will observe the chip's behavoir again and use their profile to find the secret key.
  
 \subsection{Learning Objectives}
 By the end of this workshop, participants will be able to:
 \begin{enumerate}[label=\arabic*.]
-  \item{} Understand the ideas behind why leakage assessment is necessary in side channel analysis.
-  \item{} Understand the ideas behind profiling a device and the attacks that enables.
+  \item{} Understand the importance of leakage assessment.
+  \item{} Understand the how a profile is made and used in attacks.
   \item{} Implement their understanding in a practical simulated scenario.
 \end{enumerate}
  
@@ -88,7 +88,7 @@ By the end of this workshop, participants will be able to:
 \begin{tabularx}{\linewidth}{@{}l X@{}}
   \toprule{}
   \textbf{Target audience} & Undergraduate Computer Science and Computer Engineering Students. \\\\
-  \textbf{Assumed background} & A general knowledge of operating systems, Linux, and computer architecture, but the activity will be designed to be beginner-friendly, while still providing a challenge for more advanced students. \\
+  \textbf{Assumed background} & Ability to run python script to launch game GUI. Basic foundations of how chips are traced and what metrics are tracked (specifically power draw and electromagnetism readings). \\
   \bottomrule{}
 \end{tabularx}
  
@@ -98,7 +98,7 @@ By the end of this workshop, participants will be able to:
 \section{Structure}
  
 \subsection{Format}
-The activity will resemble CTF-style challenges, having files that students will pull from a Github repository, and then interact with the simulated leaking devices using a local TCP service, as seen in many crypto and pwn challenges.
+This activity will be performed on a game-like GUI run using pygame and largely developed using AI agents. Students will run a script starting the "game" and use on-screen buttons and readouts to simulate working with hardware. 
  
 \subsection{Stage Breakdown}
  
@@ -106,16 +106,18 @@ The activity will resemble CTF-style challenges, having files that students will
   \toprule{}
   \textbf{Stage} & \textbf{Name} & \textbf{Description} & \textbf{Time} \\
   \midrule{}
-  0 & LEAK//ASSESS & Students will connect to a local simulated target device, which they are then able to interact with and capture simulated traces from. This stage is designed to teach leakage assessment, having students comparing fixed and random trace sets using a t-test to determine if there is statistically distinguishable information from the noise. & 20 min \\[0.4em]
+  0 & LEAK ASSESSMENT & Students will interact with the game to observe the traces of the four chips under chosen conditions. The user can select between a fixed or random plaintext input and can specify how many trails to collect. Collected data from trials under different conditions can be compared on a statistical graph. Students will use the graphs they collect to infer which of the four chips is leaky. & 25 min \\[0.4em]
   \\
-  1 & PROFILE//BREACH & Students connect to a local simulated device with a known key that they can query to build a template attack. It is intended for students to learn how to build a profile from a few captured traces from the target device. & 40 min \\[0.4em]
+  1 & PROFILING & After deciding which chip is leaky in the leak assessment stage, students will build a profile of the chip. The program will allow them to observe the traces from trials on a student-controlled copy of the chip. They will control the plaintext and secret key to observe how the chip operates under these conditions to build a full profile of the chip. & 25 min \\[0.4em]
+  \\
+  2 & KEY RECOVERY & Students will use the profile they developed to determine the secret key of the leaky chip. They will observe the traces from the leaky chip and compare the traces to their profile to infer the key by observing which conditions on the copy of the chip produced the same traces as observed on the real chip. & 10 min \\[0.4em]
   \midrule{}
   & & \hfill\textbf{Total} & 60 min \\
   \bottomrule{}
 \end{tabular}
  
 \subsection{Scoring / Completion Criteria}
-Students will submit the retrieved key byte to a remote server as a flag
+Students will submit a writeup explaining how they determined which chip had the leak, their process for developing a profile, and how they figured out the secret key.
  
 % =====================================================
 % 4. TECHNICAL REQUIREMENTS
@@ -123,12 +125,13 @@ Students will submit the retrieved key byte to a remote server as a flag
 \section{Technical Requirements}
  
 \subsection{Infrastructure}
-This activity will be designed to run on most OSes, the only firm requirement is an environment that is capable of running python. Students will be provided a docker image to prevent versioning issues from arising. Additionally, A remote CTF server will be hosted for students to submit the final flag to signal their completion of the activity.
+This activity will be designed to run on most OSes, the only firm requirement is an environment that is capable of running python. Students will be provided a instruction on how to start the program, including dependencies.
  
 \subsection{Materials to Be Provided}
 \begin{itemize}[label=--]
   \item{} Repo containing all necessary scripts, code, and information
   \item{} README/pdf containing a description of the activity and instructions
+  \item{} Challenge walkthrough that explains how the secret key can be determined. 
 \end{itemize}
 
 \end{document}
