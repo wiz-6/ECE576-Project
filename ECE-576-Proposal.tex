@@ -24,15 +24,14 @@
 \titleformat{\subsection}
   {\normalfont\large\bfseries\color{accent}}
   {\thesubsection}{0.6em}{}
-\titlespacing*{\section}{0pt}{1.4em}{0.6em}
-\titlespacing*{\subsection}{0pt}{1.1em}{0.4em}
+\titlespacing*{\section}{0pt}{1em}{0.4em}
+\titlespacing*{\subsection}{0pt}{0.8em}{0.2em}
  
 % ---------- Header / Footer ----------
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.4pt}
 \fancyhead[R]{\small\thepage}
-\fancyfoot[C]{\small\textcolor{rulegray}{Draft proposal --- 9 / 22 / 26}}
  
 \hypersetup{
   colorlinks=true,
@@ -55,14 +54,13 @@
   {\normalsize
     \begin{tabular}{rl}
       \textbf{By:} & Brayden Little and Cami Payne \\
-      \textbf{Date:} & 9 / 22 / 26 \\
+      \textbf{Date:} & 10 / 15 / 26 \\
     \end{tabular}
   }
 \end{center}
  
 \vspace{1em}
 \hrule
-\vspace{1.5em}
  
 % =====================================================
 % 1. OVERVIEW
@@ -70,20 +68,20 @@
 \section{Overview}
  
 \subsection{Summary}
-This program will be designed to teach students the fundamentals of leakage assessment and profiling. It will be entirely run on software and be hardware independent. Students will interact with a game GUI and terminal application that allows them to observe the traces from four simulated computer chips running DES, one of which will be leaky. They will have to run experiments and record the traces of the various chips and use the traces to run a t-test to determine which chip is leaky. Then, they will interact with a copy of the chip to profile it by compiling the chip's behavior under different plaintext-secret key pairs. Finally they will observe the chip's behavoir again and use their profile to find the secret key.
+This program will be designed to teach students the fundamentals of leakage assessment and profiling. It will be entirely run on software and be hardware independent. Students will interact with a game GUI with a built-in terminal that allows them to observe the traces from four simulated computer chips running AES-128, one of which will be leaky. They will run experiments, record the traces of the various chips, and use a t-test to determine which chip is leaky. Then, they will interact with a student-controlled copy of the chip to build a profile of its leakage by collecting traces under known plaintext and key values. Finally, they will observe traces from the leaky chip again and use their profile to recover one byte of its secret AES-128 key.
  
 \subsection{Learning Objectives}
 By the end of this workshop, participants will be able to:
 \begin{enumerate}[label=\arabic*.]
   \item{} Understand the importance of leakage assessment.
-  \item{} Understand the how a profile is made and used in attacks.
-  \item{} Implement their understanding in a practical simulated scenario.
+  \item{} Understand how a profile is built and used in attacks.
+  \item{} Apply their understanding in a practical simulated scenario.
 \end{enumerate}
 
 \subsection{Subtopics to be Covered}
 Subtopics to be covered in this game/workshop are:
 \begin{enumerate}[label=\arabic*.]
-  \item \textbf{Stage 0 --- Leak Assessment:} EM leakage, noise, Hamming weight, DES, testing methodologies, Welch's t-test, TVLA, leakage interpretation.
+  \item \textbf{Stage 0 --- Leak Assessment:} Power consumption, noise, Hamming weight, AES, testing methodologies, Welch's t-test, TVLA, leakage interpretation.
   \item \textbf{Stage 1 --- Profiling:} Profiled threat models, traces, template attacks, building profiles.
   \item \textbf{Stage 2 --- Key Recovery:} Template matching, nearest-mean classification, key recovery.
 \end{enumerate}
@@ -93,10 +91,10 @@ Subtopics to be covered in this game/workshop are:
 \section{Prerequisites}
  
 \begin{tabularx}{\linewidth}{@{}l X@{}}
-  \toprule{}
-  \textbf{Target audience} & Undergraduate Computer Science and Computer Engineering Students. \\\\
+  \toprule
+  \textbf{Target audience} & Undergraduate Computer Science and Computer Engineering Students. \\
   \textbf{Assumed background} & Ability to run python script to launch game GUI. Basic foundations of how chips are traced and what metrics are tracked (specifically power draw and electromagnetism readings). Some familiarity with linux-style command line input. \\
-  \bottomrule{}
+  \bottomrule
 \end{tabularx}
  
 % =====================================================
@@ -105,26 +103,56 @@ Subtopics to be covered in this game/workshop are:
 \section{Structure}
  
 \subsection{Format}
-This activity will be performed on a game-like GUI run using pygame and through a terminal application. Students will run a script starting the "game" and use on-screen buttons and readouts to simulate working with hardware. 
- 
+The activity is a single pygame application. Students view traces and graphs on screen and work through a built-in terminal with a small command set (including help). No separate tools are needed.
+
 \subsection{Stage Breakdown}
- 
-\begin{tabular}{@{}l l p{0.42\linewidth} c@{}}
-  \toprule{}
-  \textbf{Stage} & \textbf{Name} & \textbf{Description} & \textbf{Time} \\
-  \midrule{}
-  0 & LEAK ASSESSMENT & Students will interact with the game to observe the traces of the four chips under chosen conditions. The user can select between a fixed or random plaintext input and can specify how many trails to collect. Collected data from trials under different conditions can be compared on a statistical graph. Students will use the graphs they collect to infer which of the four chips is leaky. & 25 min \\[0.4em]
-  \\
-  1 & PROFILING & After deciding which chip is leaky in the leak assessment stage, students will build a profile of the chip. The program will allow them to observe the traces from trials on a student-controlled copy of the chip. They will control the plaintext and secret key to observe how the chip operates under these conditions to build a full profile of the chip. & 25 min \\[0.4em]
-  \\
-  2 & KEY RECOVERY & Students will use the profile they developed to determine the secret key of the leaky chip. They will observe the traces from the leaky chip and compare the traces to their profile to infer the key by observing which conditions on the copy of the chip produced the same traces as observed on the real chip. & 10 min \\[0.4em]
-  \midrule{}
-  & & \hfill\textbf{Total} & 60 min \\
-  \bottomrule{}
+
+\subsubsection*{Stage 0 --- LEAK ASSESSMENT}
+
+\noindent\textbf{Objective.} Students learn what leakage assessment is for. They will learn to figure out, before any attack is attempted, whether a device's power consumption depends on secret data. By the end of the stage they should be able to run a fixed-versus-random Welch's t-test, read the resulting curve against the TVLA threshold, and explain why a trace that merely looks busy or irregular is not evidence of leakage.
+
+\noindent\textbf{Activity.} Students will interact with the game to observe the traces of the four chips under chosen conditions. They will use terminal commands to capture traces from a chosen chip, selecting a fixed or random plaintext input and the number of trials to collect, and to run the t-test on the collected data. Lastly, students will use the graphs they collect to infer which of the four chips is leaky.
+
+\noindent\textbf{Simulated leakage model.} Each simulated chip models the first AES-128 round for one key byte. A trace is a fixed baseline (a simple sine wave) plus Gaussian noise (the amount of which will be chosen so that the leak is clearly discernible), generated in Python with NumPy. On the leaky chip, a short window of the trace also carries the Hamming weight of the S-box output, S-box(p XOR k), where p is the plaintext byte and k is the key byte. This is the standard Hamming weight model used in the ChipWhisperer tutorials. The other three chips have no key-dependent term: one is noise only, one is masked with a fresh random value for each trace, and one has a fixed pattern of peaks that is the same on every trace. Masking randomizes the value that leaks, so it has no fixed relationship to the key, and the fixed peaks are the same for fixed and random inputs, so they look busy but carry no data dependence. A fixed-versus-random t-test will therefore show a t-value above 4.5 on the leaky chip only, and only near the leak location. The leaky chip’s identity and leak location are randomized each session.
+
+\noindent\textbf{Success criteria.} Students identify the leaky chip and report its peak sample index, t-value, and traces per set.
+
+\subsubsection*{Stage 1 --- PROFILING}
+
+\noindent\textbf{Objective.} Students will learn how to build a profile of a device that they will then be able to use to extract a key byte for AES-128.
+
+\noindent\textbf{Activity.} After deciding which chip is leaky in the first stage, students will build a profile of the simulated chip. The program will allow them to observe the traces from trials on a student-controlled copy of the chip. We simplify the activity to recovering a single key byte, which teaches the core concepts without making things take too long. 
+
+\noindent\textbf{What is being profiled.} The profile has nine classes, one for each possible Hamming weight of the S-box output. On the student-controlled copy, students choose the key and how many plaintexts to send, then run the profiling command. The command labels each trace with the Hamming weight of the S-box output and computes the mean trace value at the leak location found in Stage 0 for each class. The nine means form the profile, and students check that they rise steadily with Hamming weight.
+
+\noindent\textbf{Success criteria.} Students submit the nine class means as a table or plot. The means should rise steadily with Hamming weight. The minimum traces per class will be set during development.
+
+\subsubsection*{Stage 2 --- KEY RECOVERY}
+
+\noindent\textbf{Objective.} Students will use the profile they developed to determine one byte of the secret key of the leaky chip.
+
+\noindent\textbf{Activity.} Students will use the profile they built to attack the leaky chip. They will observe traces from the leaky chip, whose key is unknown, and compare them against the class means in their profile to infer which key byte value best explains the observed traces.
+
+\noindent\textbf{Attack procedure.} Students capture a small number of traces from the leaky chip using random plaintexts and an unknown key. For each of the 256 possible key byte values, the attack command predicts the Hamming weight of the S-box output for every trace and measures how far the observed trace value is from the matching class mean in the profile. The guess with the smallest total distance is the recovered key byte. Because many byte values share the same Hamming weight, a single trace cannot identify the key byte, and the evidence builds up as more traces are collected.
+
+\noindent\textbf{Success criteria.} Students recover the correct key byte, which the game will verify.
+
+\subsection{Timetable}
+\begin{tabular}{@{}l l c@{}}
+  \toprule
+  \textbf{Stage} & \textbf{Name} & \textbf{Time} \\
+  \midrule
+  0 & LEAK ASSESSMENT & 25 min \\
+  1 & PROFILING & 25 min \\
+  2 & KEY RECOVERY & 10 min \\
+  \midrule
+  & \hfill\textbf{Total} & 60 min \\
+  \bottomrule
 \end{tabular}
  
-\subsection{Scoring / Completion Criteria}
-Students will submit a writeup explaining how they determined which chip had the leak, their process for developing a profile, and how they figured out the secret key.
+\subsection{Scoring / Completion Criteria} Students submit a short write-up with the evidence listed in each stage’s success criteria. The write-up must also explain, in the student’s own words and citing their own numbers, why each non-leaky chip stays below the threshold using its peak t-value, and why a single attack trace cannot identify the key byte. Because chip identities, leak location, and key are randomized each session, answers can be checked against the game’s recorded results.
+
+
  
 % =====================================================
 % 4. TECHNICAL REQUIREMENTS
@@ -132,14 +160,21 @@ Students will submit a writeup explaining how they determined which chip had the
 \section{Technical Requirements}
  
 \subsection{Infrastructure}
-This activity will be designed to run on most OSes, the only firm requirement is an environment that is capable of running python. Students will be provided a instruction on how to start the program, including dependencies.
+This activity will be designed to run on any OS that is capable of running python. Students will be provided instructions on how to start the program, including installing the required packages (numpy, scipy, and pygame).
  
 \subsection{Materials to Be Provided}
 \begin{itemize}[label=--]
   \item{} Repo containing all necessary scripts, code, and information
   \item{} README/pdf containing a description of the activity and instructions
-  \item{} Challenge walkthrough that explains how the secret key can be determined. 
+  \item{} Challenge walkthrough that explains how the secret key can be determined. \newline (Instructor only / distributed after activity is over)
 \end{itemize}
 
-\end{document}
+\section{AI Policy and Usage}
+ 
+\subsection{Role in the game}
+AI will be used mainly to support the development of the GUI and interactive aspects of the game, as well as supporting the general development process and sanity checking work. LLMs will be incorporated in the game itself in the form of a AI helper bot in the game that students will be able to ask questions to. The bot will be given the full context of the game save for the answers that students will need to recover, and prompted to answer questions in a helpful way without giving away any real answers. The model will be hosted on a local lab server for sake of demonstration and to avoid API costs, but is easily extensible to make the bot function better and for larger groups via the many LLM APIs that exist. The game will automatically connect to the bot server, and in case of failure, not having the bot will not impede the flow of the game.
+ 
+\subsection{How will we prevent students from trivializing the game with LLMs?}
+Every required result comes from the student’s own randomized session, so an LLM alone cannot produce it, and the write-up asks for explanations of those specific results. The built-in chatbot is never given the session’s answers, and we will test this by trying to extract them before the activity is used. Students may use outside AI tools to learn concepts, since that does not replace the student actually doing the activity, but we encourage them to use the built-in chatbot.
 
+\end{document}
