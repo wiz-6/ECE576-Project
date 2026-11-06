@@ -65,27 +65,37 @@ class Chip(ABC):
 class FixedChip(Chip):
     def get_trace(self, plaintext, key):
         trace = self._base_trace()
+
+        # Add fixed peaks to fixed windows
         trace[30:35] += 4
         trace[90:95] += 6
         trace[150:155] += 3
+
         return trace
 
 class NoiseChip(Chip):
     def get_trace(self, plaintext, key):
+        # Base Trace is already just noise
         return self._base_trace()
 
 class RandomChip(Chip):
     def get_trace(self, plaintext, key):
         trace = self._base_trace()
+
         # A fresh mask makes the leaked byte independent of plaintext and key.
         value = SBOX[int(plaintext) ^ (int(key) & 0xff)] ^ int(rng.integers(0, 256))
+
         trace[self.leak_index:self.leak_index + 5] += 0.8 * value.bit_count()
+
         return trace
 
 class LeakyChip(Chip):
     def get_trace(self, plaintext, key):
         trace = self._base_trace()
+
         # Only the lowest key byte is modeled; full AES is unnecessary here.
         value = SBOX[int(plaintext) ^ (int(key) & 0xff)]
+        
         trace[self.leak_index:self.leak_index + 5] += 0.8 * value.bit_count()
+        
         return trace

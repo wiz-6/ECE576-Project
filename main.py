@@ -1,7 +1,7 @@
 import random
 
 from help import help
-from chip import Chip, init_chip
+from chip import init_chip
 
 # Globals
 secret_key = None
