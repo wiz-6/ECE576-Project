@@ -1,4 +1,11 @@
+import random
+
 from help import help
+from chip import Chip, init_chip
+
+# Globals
+secret_key = None
+chips = []
 
 def exit_game():
     print("Exiting the game...")
@@ -15,8 +22,20 @@ def process_command(command):
             print("Unknown command. Type 'help' for a list of commands.")
 
 def main():
+    global secret_key, chips
+
     # Game setup and initialization
-    print("Welcome to the game!")
+    print("Welcome to the game!") #TODO: Add an actual game introduction
+    rng_seed = input("Please type your WPI username: ") 
+    random.seed(rng_seed)  # Seed the random number generator for reproducibility
+
+    # Init key
+    secret_key = random.getrandbits(128)  # Generate a random 128-bit key
+
+    # Init chips
+    chip_classifications = random.shuffle(["fixed", "noise", "random", "leaky"])
+    for c in chip_classifications:
+        chips.append(init_chip(c))
 
     # Game (terminal) loop
     while True:
