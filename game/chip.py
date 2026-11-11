@@ -6,7 +6,7 @@ Class for the chip object. This class is used to represent virtual running AES-1
 '''
 
 import numpy as np
-rng = np.random.default_rng(123)
+rng = np.random.default_rng()
 
 from abc import ABC, abstractmethod
 
