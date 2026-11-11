@@ -10,7 +10,7 @@ import numpy as np
 
 from analysis import candidate_profile, build_profile, collect_ttest, merge_profiles, recover_key
 from chip import LeakyChip, init_chip
-from help import COMMAND_NAMES, COMMON_COMMANDS, STAGE_COMMANDS, STAGE_GOALS, TOPICS, SETTINGS, command_choices, setting_names, resolve_command, help as show_help, public_text, update_command_references
+from help import COMMAND_NAMES, COMMON_COMMANDS, STAGE_COMMANDS, STAGE_GOALS, SETTINGS, stage_topics, command_choices, setting_names, resolve_command, help as show_help, public_text, update_command_references
 
 
 class Game:
@@ -46,7 +46,8 @@ class Game:
         self.secret_key = rng.getrandbits(128)
         kinds = ["fixed", "noise", "random", "leaky"]
         rng.shuffle(kinds)
-        self.chips = [init_chip(kind) for kind in kinds]
+        # Leak windows come from the username seed so restarts reproduce the same chips.
+        self.chips = [init_chip(kind, rng.randint(0, 195)) for kind in kinds]
         self.stage = 0
         self.selected = self.sample = self.profile = self.attack = None
         self.profile_submitted = False
@@ -148,8 +149,7 @@ class Game:
                 return []
             if name == "help" and len(words) == 2:
                 choices = command_choices(available)
-                if self.stage < 3:
-                    choices.append(TOPICS[self.stage])
+                choices.extend(stage_topics(self.stage))
             elif name == "view" and len(words) == 2:
                 choices = list(self.terminal.charts)
                 if self.chips:
